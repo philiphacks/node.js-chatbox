@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>LiveStreaming</title>
+  <script src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
+</head>
+<body>
+
+Hello! Welcome to chatzy
+
+<ul id="messages">
+</ul>
+
+<form id="new-message">
+  <input id="message-name" type="text" placeholder="Name" />
+  <input id="message-content" type="text"/>
+  <input type="submit" id="send-message"/>
+</form>
+
+</body>
+<script src="/socket.io/socket.io.js"></script>
+<script>
+  var socket = io.connect('http://localhost:3000');
+  socket.on('message', function (data) {
+    $("#messages").append($("<li>").text(data.name + ": " + data.content));
+  });
+  $('#new-message').submit(function() {
+    return false;
+  });
+  $("#send-message").click(function(e) {
+    var name = $("#message-name").val(),
+        content = $("#message-content").val();
+
+    $("#messages").append($("<li>").text(name + ": " + content));
+    socket.emit('messages.create', { name: name, content: content });
+  });
+</script>
+</html>
+
